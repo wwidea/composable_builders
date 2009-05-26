@@ -1,13 +1,17 @@
 ComposableBuilders
 ==================
 
-Introduction goes here.
+A series of modules that can be combined together to create a customized FormBuilder class.
 
 
 Example
 =======
 
-Example goes here.
+<% form_for @post, :builder => ComposableBuilder(:tagged => true, :printable => true) do |form| %>
+  <%= form.text_field :title %>
+  <%= form.text_area :body %>
+  <%= form.submit %>
+<% end %>
 
 
-Copyright (c) 2009 [name of plugin creator], released under the MIT license
+Copyright (c) 2009 WWIDEA, released under the MIT license

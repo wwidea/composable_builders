@@ -15,9 +15,9 @@ module ComposableBuilders
             create_tagged_field(name)
           end
 
-          {'select' => 1, 'collection_select' => 3, 'country_select' => 1 }.each do |name, options_position|
-            create_tagged_field(name, options_position)
-          end
+          create_tagged_field('select', 1)
+          create_tagged_field('collection_select', 3)
+          create_tagged_field('country_select', 1) if superclass.method_defined?(:country_select)
         end
     
         #######

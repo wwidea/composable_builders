@@ -38,10 +38,14 @@ module ComposableBuilders
         
         def format_for_display(value)
           result = case value
-            when Date, Time : value.strftime("%m/%d/%y")
-            when TrueClass : 'Yes'
-            when FalseClass : 'No'
-            when String : value[/\n/] ? @template.simple_format(value) : value
+            when Date, Time
+              value.strftime("%m/%d/%y")
+            when TrueClass
+              'Yes'
+            when FalseClass
+              'No'
+            when String
+              value[/\n/] ? @template.simple_format(value) : value
             else value.respond_to?(:name) ? value.name : value.to_s
           end
           result.blank? ? '&nbsp;' : result

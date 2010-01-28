@@ -11,7 +11,7 @@ module ComposableBuilders
   
       module ClassMethods
         def define_methods(field_helpers)
-          (field_helpers + %w(date_select) - %w(radio_button hidden_field apply_form_for_options! fields_for label)).each do |name|
+          (field_helpers.map { |name| name.to_s } + %w(date_select) - %w(radio_button hidden_field apply_form_for_options! fields_for label)).each do |name|
             create_tagged_field(name)
           end
 

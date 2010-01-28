@@ -18,7 +18,7 @@ module ComposableBuilders
               if @template.template_format == TEMPLATE_FORMAT
                 send("#{method}_for_pdf", *args)
               else
-                super
+                super(*args)
               end
             end
           end

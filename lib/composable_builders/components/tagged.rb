@@ -47,7 +47,7 @@ module ComposableBuilders
         end
   
         def cancel(path = {:action => 'index'})
-          @template.content_tag(:div, @template.link_to_cancel(path))
+          @template.content_tag(:div, @template.link_to_cancel(path), :class => 'cancel_link')
         end
   
         def radio_select(method, choices, opts = {})
@@ -57,7 +57,24 @@ module ComposableBuilders
             s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts), :class => 'multicheck')
           end
         end
-  
+        
+        def habtm_check_boxes(items, options = {})
+          association = items.first.class.name.underscore.pluralize
+          @template.content_tag(:div, :class => 'labeled_list') do
+            @template.content_tag(:label, (options.delete(:text) || association.titleize)) +
+            # ensure array passed to params
+            @template.hidden_field_tag(habtm_tag_name(association), nil) +
+            @template.content_tag(:ul, :class => 'multicheck') do
+              items.inject('') do |string, item|
+                string << @template.content_tag(:li) do
+                  @template.check_box_tag(habtm_tag_name(association), item.id, object.send(association).include?(item)) +
+                  item.name.to_s
+                end
+              end
+            end
+          end
+        end
+        
         #######
         private
         #######
@@ -86,6 +103,10 @@ module ComposableBuilders
             radio_button(method, value) +
             @template.content_tag(:label, name, :for => "#{@object_name}_#{method}_#{value}")
           )
+        end
+        
+        def habtm_tag_name(association)
+          "#{object_name}[#{association.singularize}_ids][]"
         end
       end
     end

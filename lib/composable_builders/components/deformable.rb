@@ -11,7 +11,7 @@ module ComposableBuilders
       
       module ClassMethods
         def define_methods
-          %w(date_select select collection_select text_field text_area).each do |method_name|
+          %w(date_select collection_select text_field text_area).each do |method_name|
             define_method(method_name.to_sym) do |method, *args|
               display_value_for_method(method)
             end
@@ -24,12 +24,21 @@ module ComposableBuilders
           @template.content_tag(:div, (text ? text : method_name.to_s.humanize), :class => 'deformed_field_label')
         end
         
+        def select(method, choices, *args)
+          choice = choices.first.is_a?(Array) ? choices.rassoc(get_value_for_method(method)) : nil
+          choice ? display_value(choice.first) : display_value_for_method(method)
+        end
+        
         #######
         private
         #######
         
         def display_value_for_method(method)
-          @template.content_tag(:div, format_for_display(get_value_for_method(method)), :class => 'deformed_field_value')
+          display_value(format_for_display(get_value_for_method(method)))
+        end
+        
+        def display_value(value)
+          @template.content_tag(:div, value, :class => 'deformed_field_value')
         end
         
         def get_value_for_method(method)

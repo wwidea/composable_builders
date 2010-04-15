@@ -11,7 +11,7 @@ module ComposableBuilders
       
       module ClassMethods
         def define_methods
-          %w(date_select select text_field text_area).each do |method_name|
+          %w(date_select select collection_select text_field text_area).each do |method_name|
             define_method(method_name.to_sym) do |method, *args|
               display_value_for_method(method)
             end

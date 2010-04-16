@@ -11,7 +11,7 @@ module ComposableBuilders
       
       module ClassMethods
         def define_methods
-          %w(date_select select text_field).each do |method|
+          %w(date_select select text_field password_field).each do |method|
             define_method(method.to_sym) do |*args|
               if @template.request.format.pdf?
                 send("#{method}_for_pdf", *args)
@@ -34,6 +34,10 @@ module ComposableBuilders
         end
         
         def text_field_for_pdf(*args)
+          blank_line
+        end
+        
+        def password_field_for_pdf(*args)
           blank_line
         end
         

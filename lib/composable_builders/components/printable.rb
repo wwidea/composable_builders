@@ -11,7 +11,7 @@ module ComposableBuilders
       
       module ClassMethods
         def define_methods
-          %w(date_select select text_field password_field).each do |method|
+          %w(date_select select collection_select text_field password_field).each do |method|
             define_method(method.to_sym) do |*args|
               if @template.request.format.pdf?
                 send("#{method}_for_pdf", *args)
@@ -27,6 +27,11 @@ module ComposableBuilders
         def select_for_pdf(method, choices, options = {}, html_options = {})
           return blank_line if options[:blank_line]
           @template.content_tag(:ul, (choices.map { |c| @template.content_tag(:li, Array(c).first) } * ''), :class =>'list')
+        end
+        
+        def collection_select_for_pdf(method, collection, value_method, text_method, options = {}, html_options = {})
+          return blank_line if options[:blank_line]
+          @template.content_tag(:ul, (collection.map { |c| @template.content_tag(:li, c.send(text_method)) } * ''), :class =>'list')
         end
         
         def date_select_for_pdf(*args)

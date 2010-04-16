@@ -18,6 +18,7 @@ module ComposableBuilders
           create_tagged_field('select', 1)
           create_tagged_field('collection_select', 3)
           create_tagged_field('country_select', 1) if superclass.method_defined?(:country_select)
+          create_tagged_field('calendar_date_select', 1) if superclass.method_defined?(:calendar_date_select)
         end
     
         #######

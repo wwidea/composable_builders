@@ -37,7 +37,7 @@ module ComposableBuilders
             options = (args[options_position] || {}).reverse_merge!(default_options)
             tail = options.delete(:tail)
             @template.content_tag(:div, options.delete(:div_options)) do
-              (returning String.new do |result|
+              (String.new.tap do |result|
                 result << label(method, label_text(method, options.delete(:text), options.delete(:required)), :id => options.delete(:label_id))
                 result << send("#{method_name}_without_tags", method, *args)
                 result << tail if tail
@@ -59,7 +59,7 @@ module ComposableBuilders
   
         def radio_select(method, choices, opts = {})
           field_name = opts.delete(:field_name) || format_field_name(method)
-          returning String.new do |s|
+          String.new.tap do |s|
             s << @template.content_tag(:div, @template.content_tag(:label, field_name))
             s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts), :class => 'multicheck')
           end
@@ -97,17 +97,17 @@ module ComposableBuilders
         end
         
         def build_radio_buttons(method, choices, opts)
-          returning String.new do |s|
+          String.new.tap do |s|
             choices.each do |name, value|
-              s << build_radio_button(method, name, value)
+              s << build_radio_button(method, name, value, (opts[:selected] == name))
             end
             s << build_radio_button(method, 'None') if opts[:include_blank]
           end
         end
         
-        def build_radio_button(method, name, value = 0)
+        def build_radio_button(method, name, value = 0, checked = false)
           @template.content_tag(:li,
-            radio_button(method, value) +
+            radio_button(method, value, :checked => checked) +
             @template.content_tag(:label, name, :for => "#{@object_name}_#{method}_#{value}")
           )
         end

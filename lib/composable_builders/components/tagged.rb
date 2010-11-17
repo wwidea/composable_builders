@@ -25,14 +25,23 @@ module ComposableBuilders
         private
         #######
     
+        # create methods to wrap form methods
+        # options:
+        # - :tail - appended to end of content inside the div
+        # - :div_options - passes options into the div tag
+        # - :text - change the label text
+        # - :required - marks the field as required
+        # - :label_id - set the lable id
         def create_tagged_field(method_name, options_position = 0)
           define_method("#{method_name}_with_tags") do |method, *args|
             options = (args[options_position] || {}).reverse_merge!(default_options)
-            @template.content_tag(:div) do
-              returning String.new do |result|
+            tail = options.delete(:tail)
+            @template.content_tag(:div, options.delete(:div_options)) do
+              (returning String.new do |result|
                 result << label(method, label_text(method, options.delete(:text), options.delete(:required)), :id => options.delete(:label_id))
                 result << send("#{method_name}_without_tags", method, *args)
-              end
+                result << tail if tail
+              end).html_safe
             end
           end
           alias_method_chain method_name, :tags
@@ -40,11 +49,8 @@ module ComposableBuilders
       end
 
       module InstanceMethods
-        def submit(*args)
-          # options = args.last.is_a?(Hash) ? args.pop : {}
-          # options.reverse_merge!(:class => 'submit_button')
-          # args << options
-          @template.content_tag(:div, @template.submit_tag(*args))
+        def submit(value = 'Save Changes', options = {})
+          @template.content_tag(:div, @template.submit_tag(value, options))
         end
   
         def cancel(path = {:action => 'index'})
@@ -52,26 +58,26 @@ module ComposableBuilders
         end
   
         def radio_select(method, choices, opts = {})
-          text = opts.delete(:text) || format_field_name(method)
+          field_name = opts.delete(:field_name) || format_field_name(method)
           returning String.new do |s|
-            s << @template.content_tag(:div, @template.content_tag(:label, text))
+            s << @template.content_tag(:div, @template.content_tag(:label, field_name))
             s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts), :class => 'multicheck')
           end
         end
         
         def habtm_check_boxes(items, options = {})
-          association = items.first.class.name.underscore.pluralize
+          association = options.delete(:association) || items.first.class.name.underscore.pluralize
           @template.content_tag(:div, :class => 'labeled_list') do
             @template.content_tag(:label, (options.delete(:text) || association.titleize)) +
             # ensure array passed to params
             @template.hidden_field_tag(habtm_tag_name(association), nil) +
             @template.content_tag(:ul, :class => 'multicheck') do
-              items.inject('') do |string, item|
+              (items.inject('') do |string, item|
                 string << @template.content_tag(:li) do
                   @template.check_box_tag(habtm_tag_name(association), item.id, object.send(association).include?(item)) +
                   item.name.to_s
                 end
-              end
+              end).html_safe
             end
           end
         end

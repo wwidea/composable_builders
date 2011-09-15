@@ -67,17 +67,19 @@ module ComposableBuilders
         
         def habtm_check_boxes(items, options = {})
           association = options.delete(:association) || items.first.class.name.underscore.pluralize
-          @template.content_tag(:div, :class => 'labeled_list') do
+          @template.content_tag(:div, :class => (options.delete(:class) || 'labeled_list')) do
             @template.content_tag(:label, (options.delete(:text) || association.titleize)) +
             # ensure array passed to params
             @template.hidden_field_tag(habtm_tag_name(association), nil) +
-            @template.content_tag(:ul, :class => 'multicheck') do
-              (items.inject('') do |string, item|
-                string << @template.content_tag(:li) do
-                  @template.check_box_tag(habtm_tag_name(association), item.id, object.send(association).include?(item)) +
-                  item.name.to_s
-                end
-              end).html_safe
+            @template.content_tag(:div) do
+              @template.content_tag(:ul, :class => 'multicheck') do
+                (items.inject('') do |string, item|
+                  string << @template.content_tag(:li) do
+                    @template.check_box_tag(habtm_tag_name(association), item.id, object.send(association).include?(item)) +
+                    item.name.to_s
+                  end
+                end).html_safe
+              end
             end
           end
         end

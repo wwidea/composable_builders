@@ -59,10 +59,10 @@ module ComposableBuilders
   
         def radio_select(method, choices, opts = {})
           field_name = opts.delete(:field_name) || format_field_name(method)
-          String.new.tap do |s|
+          (String.new.tap do |s|
             s << @template.content_tag(:div, @template.content_tag(:label, field_name))
-            s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts), :class => 'multicheck')
-          end
+            s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts).html_safe, :class => 'multicheck')
+          end).html_safe
         end
         
         def habtm_check_boxes(items, options = {})

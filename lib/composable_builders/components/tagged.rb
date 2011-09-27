@@ -77,7 +77,7 @@ module ComposableBuilders
             message +="#################################################\r\n"
             puts message
             RAILS_DEFAULT_LOGGER.debug(message)
-            deprecated_habtm_check_boxes(args[0], args[1])
+            deprecated_habtm_check_boxes(*args)
           else
             method = args[0]
             choices = args[1]

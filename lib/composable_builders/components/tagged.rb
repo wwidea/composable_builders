@@ -49,6 +49,8 @@ module ComposableBuilders
       end
 
       module InstanceMethods
+        include ActionView::Helpers::FormTagHelper
+        
         def submit(value = 'Save Changes', options = {})
           @template.content_tag(:div, @template.submit_tag(value, options))
         end
@@ -59,13 +61,36 @@ module ComposableBuilders
   
         def radio_select(method, choices, opts = {})
           field_name = opts.delete(:field_name) || format_field_name(method)
-          (String.new.tap do |s|
+          (String.new.tap { |s|
             s << @template.content_tag(:div, @template.content_tag(:label, field_name))
             s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts).html_safe, :class => 'multicheck')
-          end).html_safe
+          }).html_safe
         end
         
-        def habtm_check_boxes(items, options = {})
+        def habtm_check_boxes(*args)
+          unless args[0].is_a?(String) or args[0].is_a?(Symbol)
+            message = "#################################################\r\n"
+            message +="###  Passing an array to habtm_check_boxes as ###\r\n"
+            message +="### the first argument is deprecated. Please  ###\r\n"
+            message +="### use syntax consistent with other helpers  ###\r\n"
+            message +="### and pass the object method name.          ###\r\n"
+            message +="#################################################\r\n"
+            puts message
+            RAILS_DEFAULT_LOGGER.debug(message)
+            deprecated_habtm_check_boxes(args[0], args[1])
+          else
+            method = args[0]
+            choices = args[1]
+            opts = args[2] || {}
+            field_name = opts.delete(:field_name) || format_field_name(method)
+            (String.new.tap { |s|
+              s << @template.content_tag(:div, @template.content_tag(:label, field_name))
+              s << @template.content_tag(:ul, build_habtm_check_boxes(method, choices, opts).html_safe, :class => 'multicheck')
+            }).html_safe
+          end
+        end
+      
+        def deprecated_habtm_check_boxes(items, options = {})
           association = options.delete(:association) || items.first.class.name.underscore.pluralize
           @template.content_tag(:div, :class => (options.delete(:class) || 'labeled_list')) do
             @template.content_tag(:label, (options.delete(:text) || association.titleize)) +
@@ -107,10 +132,25 @@ module ComposableBuilders
           end
         end
         
+        def build_habtm_check_boxes(method, choices, opts)
+          String.new.tap do |s|
+            choices.each do |name, value|
+              s << build_habtm_check_box(method, name, value)
+            end
+            s << build_habtm_check_box(method, 'None') if opts[:include_blank]
+          end
+        end
+        
         def build_radio_button(method, name, value = 0, checked = false)
           @template.content_tag(:li,
             radio_button(method, value, :checked => checked) +
-            @template.content_tag(:label, name, :for => "#{@object_name}_#{method}_#{value}")
+              @template.content_tag(:label, name, :for => "#{@object_name}_#{method}_#{value}")
+          )
+        end
+        
+        def build_habtm_check_box(method, name, value)
+          @template.content_tag(:li,
+            check_box_tag("#{@object_name}[#{method}][]", value, @object.send(method).include?(value)) + name.to_s
           )
         end
         

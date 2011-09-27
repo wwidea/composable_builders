@@ -69,14 +69,6 @@ module ComposableBuilders
         
         def habtm_check_boxes(*args)
           unless args[0].is_a?(String) or args[0].is_a?(Symbol)
-            message = "#################################################\r\n"
-            message +="###  Passing an array to habtm_check_boxes as ###\r\n"
-            message +="### the first argument is deprecated. Please  ###\r\n"
-            message +="### use syntax consistent with other helpers  ###\r\n"
-            message +="### and pass the object method name.          ###\r\n"
-            message +="#################################################\r\n"
-            puts message
-            RAILS_DEFAULT_LOGGER.debug(message)
             deprecated_habtm_check_boxes(*args)
           else
             method = args[0]
@@ -91,6 +83,7 @@ module ComposableBuilders
         end
       
         def deprecated_habtm_check_boxes(items, options = {})
+          ActiveSupport::Deprecation.warn('Passing an array to habtm_check_boxes as the first argument is deprecated. Please use syntax consistent with _select form helpers and pass the object method name folowed by two dimensional array of choices.')
           association = options.delete(:association) || items.first.class.name.underscore.pluralize
           @template.content_tag(:div, :class => (options.delete(:class) || 'labeled_list')) do
             @template.content_tag(:label, (options.delete(:text) || association.titleize)) +

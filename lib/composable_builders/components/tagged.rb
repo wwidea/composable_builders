@@ -49,7 +49,6 @@ module ComposableBuilders
       end
 
       module InstanceMethods
-        include ActionView::Helpers::FormTagHelper
         
         def submit(value = 'Save Changes', options = {})
           @template.content_tag(:div, @template.submit_tag(value, options))
@@ -145,7 +144,7 @@ module ComposableBuilders
         
         def build_habtm_check_box(method, name, value)
           @template.content_tag(:li,
-            check_box_tag("#{@object_name}[#{method}][]", value, @object.send(method).include?(value)) + name.to_s
+            @template.check_box_tag("#{@object_name}[#{method}][]", value, @object.send(method).include?(value)) + name.to_s
           )
         end
         

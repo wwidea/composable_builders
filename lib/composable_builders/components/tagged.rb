@@ -144,11 +144,16 @@ module ComposableBuilders
         
         def build_habtm_check_box(method, name, value)
           @template.content_tag(:li,
-            @template.check_box_tag("#{@object_name}[#{method}][]", value, @object.send(method).include?(value)) + name.to_s
+            @template.hidden_field_tag(habtm_tag_name(method), nil) +
+            @template.check_box_tag(habtm_tag_name(method), value, @object.send(method).include?(value)) + name.to_s
           )
         end
         
-        def habtm_tag_name(association)
+        def habtm_tag_name(method)
+          "#{object_name}[#{method}][]"
+        end
+        
+        def deprecated_habtm_tag_name(association)
           "#{object_name}[#{association.singularize}_ids][]"
         end
       end

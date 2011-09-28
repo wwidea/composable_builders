@@ -76,8 +76,10 @@ module ComposableBuilders
             opts = args[2] || {}
             field_name = opts.delete(:field_name) || format_field_name(method)
             (String.new.tap { |s|
-              s << @template.content_tag(:div, @template.content_tag(:label, field_name))
-              s << @template.content_tag(:ul, build_habtm_check_boxes(method, choices, opts).html_safe, :class => 'multicheck')
+              s << @template.content_tag(:div, :class => (opts.delete(:class) || 'labeled_list')) do
+                @template.content_tag(:label, field_name) +
+                @template.content_tag(:ul, build_habtm_check_boxes(method, choices, opts).html_safe, :class => 'multicheck')
+              end
             }).html_safe
           end
         end

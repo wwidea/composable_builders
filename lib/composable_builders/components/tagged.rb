@@ -145,7 +145,7 @@ module ComposableBuilders
         def build_habtm_check_box(method, name, value)
           @template.content_tag(:li,
             @template.hidden_field_tag(habtm_tag_name(method), nil) +
-            @template.check_box_tag(habtm_tag_name(method), value, @object.send(method).include?(value)) + name.to_s
+            @template.check_box_tag(habtm_tag_name(method), value, @object.send(method).try(:include?, value)) + name.to_s
           )
         end
         

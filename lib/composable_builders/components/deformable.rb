@@ -11,7 +11,7 @@ module ComposableBuilders
       
       module ClassMethods
         def define_methods
-          %w(date_select select text_field text_area).each do |method_name|
+          %w(date_select collection_select text_field text_area).each do |method_name|
             define_method(method_name.to_sym) do |method, *args|
               display_value_for_method(method)
             end
@@ -21,7 +21,7 @@ module ComposableBuilders
       
       module InstanceMethods
         def label(method_name, text = nil, options = {})
-          @template.content_tag(:div, (text ? text : method_name.to_s.humanize), :class => 'deformed_field_label')
+          @template.content_tag(:div, (text ? text : method_name.to_s.humanize).html_safe, :class => 'deformed_field_label')
         end
         
         def select(method, choices, *args)
@@ -34,7 +34,11 @@ module ComposableBuilders
         #######
         
         def display_value_for_method(method)
-          @template.content_tag(:div, format_for_display(get_value_for_method(method)), :class => 'deformed_field_value')
+          display_value(format_for_display(get_value_for_method(method)))
+        end
+        
+        def display_value(value)
+          @template.content_tag(:div, value, :class => 'deformed_field_value')
         end
         
         def get_value_for_method(method)
@@ -53,7 +57,7 @@ module ComposableBuilders
               value[/\n/] ? @template.simple_format(value) : value
             else value.respond_to?(:name) ? value.name : value.to_s
           end
-          result.blank? ? '&nbsp;' : result
+          result.blank? ? '&nbsp;'.html_safe : result
         end
       end
     end

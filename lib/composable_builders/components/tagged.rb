@@ -108,7 +108,7 @@ module ComposableBuilders
         #######
         
         def label_text(method, text, required = nil)
-          (text || method.to_s.humanize) + (required ? ('&nbsp;' + @template.image_tag('icon_required.gif')) : '')
+          ((text || method.to_s.humanize) + (required ? ('&nbsp;' + @template.image_tag('icon_required.gif')) : '')).html_safe
         end
         
         def format_field_name(name)

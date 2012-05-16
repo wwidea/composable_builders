@@ -28,7 +28,7 @@ module ComposableBuilders
       module InstanceMethods
         def select_for_pdf(method, choices, options = {}, html_options = {})
           return blank_line if options[:blank_line]
-          @template.content_tag(:ul, (choices.map { |c| @template.content_tag(:li, Array(c).first) }), :class =>'list')
+          @template.content_tag(:ul, (choices.inject(String.new) { |string,choice| string += @template.content_tag(:li, Array(choice).first) }).html_safe, :class =>'list')
         end
 
         def date_select_for_pdf(*args)

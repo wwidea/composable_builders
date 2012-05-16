@@ -15,7 +15,7 @@ module ComposableBuilders
         def define_methods
           %w(date_select select text_field).each do |method|
             define_method(method.to_sym) do |*args|
-              if @template.template_format == TEMPLATE_FORMAT
+              if @template.formats.include?(TEMPLATE_FORMAT)
                 send("#{method}_for_pdf", *args)
               else
                 super(*args)

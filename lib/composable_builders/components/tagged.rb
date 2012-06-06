@@ -120,7 +120,7 @@ module ComposableBuilders
         def build_radio_buttons(method, choices, opts)
           String.new.tap do |s|
             choices.each do |name, value|
-              s << build_radio_button(method, name, value, (opts[:selected] == name))
+              s << build_radio_button(method, name, value, opts[:selected])
             end
             s << build_radio_button(method, 'None') if opts[:include_blank]
           end
@@ -135,9 +135,10 @@ module ComposableBuilders
           end
         end
         
-        def build_radio_button(method, name, value = 0, checked = false)
+        def build_radio_button(method, name, value = 0, selected = nil)
+          options = selected ?  { :checked => opts[:selected] == name } : {}
           @template.content_tag(:li,
-            radio_button(method, value, :checked => checked) +
+            radio_button(method, value, options) +
               @template.content_tag(:label, name, :for => "#{@object_name}_#{method}_#{value}")
           )
         end

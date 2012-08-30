@@ -59,7 +59,10 @@ module ComposableBuilders
         end
   
         def radio_select(method, choices, opts = {})
-          field_name = opts.delete(:field_name) || format_field_name(method)
+          if opts[:field_name]
+            ActiveSupport::Deprecation.warn "passing the :field_name argument is deprecated and will be removed from future releases, use :text instead.", caller
+          end
+          field_name = opts.delete(:text) || opts.delete(:field_name) || format_field_name(method)
           (String.new.tap { |s|
             s << @template.content_tag(:div, @template.content_tag(:label, field_name))
             s << @template.content_tag(:ul, build_radio_buttons(method, choices, opts).html_safe, :class => 'multicheck')
@@ -73,7 +76,10 @@ module ComposableBuilders
             method = args[0]
             choices = args[1]
             opts = args[2] || {}
-            field_name = opts.delete(:field_name) || format_field_name(method)
+            if opts[:field_name]
+              ActiveSupport::Deprecation.warn "passing the :field_name argument is deprecated and will be removed from future releases, use :text instead.", caller
+            end
+            field_name = opts.delete(:text) || opts.delete(:field_name) || format_field_name(method)
             (String.new.tap { |s|
               s << @template.content_tag(:div, :class => (opts.delete(:class) || 'labeled_list')) do
                 @template.content_tag(:label, field_name) +

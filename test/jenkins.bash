@@ -1,3 +1,3 @@
 #!/bin/bash
 bundle install
-rake test
+bundle exec rake test

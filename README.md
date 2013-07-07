@@ -9,11 +9,11 @@ A series of modules that can be combined together to create a customized FormBui
 Example
 =======
 
-<% form_for @post, :builder => ComposableBuilder(:tagged => true, :printable => true) do |form| %>
-  <%= form.text_field :title %>
-  <%= form.text_area :body %>
-  <%= form.submit %>
-<% end %>
+    <% form_for @post, :builder => ComposableBuilder(:tagged => true, :printable => true) do |form| %>
+      <%= form.text_field :title %>
+      <%= form.text_area :body %>
+      <%= form.submit %>
+    <% end %>
 
 
 Copyright (c) 2009 WWIDEA, released under the MIT license

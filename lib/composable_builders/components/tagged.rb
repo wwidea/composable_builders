@@ -38,7 +38,7 @@ module ComposableBuilders
             tail = options.delete(:tail)
             @template.content_tag(:div, options.delete(:div_options)) do
               (String.new.tap do |result|
-                result << label(method, label_text(method, options.delete(:text), options.delete(:required)), :id => options.delete(:label_id))
+                result << label(method, label_text(method, options.delete(:text)), :id => options.delete(:label_id), class: ('required' if options.delete(:required)))
                 result << send("#{method_name}_without_tags", method, *args)
                 result << tail if tail
               end).html_safe
@@ -113,8 +113,8 @@ module ComposableBuilders
         private
         #######
         
-        def label_text(method, text, required = nil)
-          ((text || method.to_s.humanize) + (required ? ('&nbsp;' + @template.image_tag('icon_required.gif')) : '')).html_safe
+        def label_text(method, text)
+          text || method.to_s.humanize
         end
         
         def format_field_name(name)

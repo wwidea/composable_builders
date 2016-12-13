@@ -38,7 +38,7 @@ module ComposableBuilders
             tail = options.delete(:tail)
             @template.content_tag(:div, options.delete(:div_options)) do
               (String.new.tap do |result|
-                result << label(method, label_text(method, options.delete(:text), options.delete(:required)), :id => options.delete(:label_id))
+                result << label(method, label_text(method, options.delete(:text), options.delete(:required)), id: options.delete(:label_id), class: ('required' if options.delete(:required)))
                 result << super(method, *args)
                 result << tail if tail
               end).html_safe

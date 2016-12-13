@@ -33,18 +33,17 @@ module ComposableBuilders
         # - :required - marks the field as required
         # - :label_id - set the lable id
         def create_tagged_field(method_name, options_position = 0)
-          define_method("#{method_name}_with_tags") do |method, *args|
+          define_method("#{method_name}") do |method, *args|
             options = (args[options_position] || {}).reverse_merge!(default_options)
             tail = options.delete(:tail)
             @template.content_tag(:div, options.delete(:div_options)) do
               (String.new.tap do |result|
-                result << label(method, label_text(method, options.delete(:text)), :id => options.delete(:label_id), class: ('required' if options.delete(:required)))
-                result << send("#{method_name}_without_tags", method, *args)
+                result << label(method, label_text(method, options.delete(:text)), id: options.delete(:label_id), class: ('required' if options.delete(:required)))
+                result << super(method, *args)
                 result << tail if tail
               end).html_safe
             end
           end
-          alias_method_chain method_name, :tags
         end
       end
 
